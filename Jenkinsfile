@@ -8,8 +8,28 @@ pipeline {
     stages {
         stage('build'){
             steps {
-                sh 'mvn clean deploy'
+                echo "----- build started -------"
+                sh 'mvn clean deploy -Dmaven.test.skip=true'
+                echo "----- build completed -----"
             }
         }
+        stage('test'){
+            steps{
+                echo "----- unit test started -------"
+                sh 'mvn surefire-report:report'
+                echo "----- unit test completed -------"
+            }
+        }
+        stage('sonarQube analysis'){
+            environment{
+                scannerHome = tool 'daimyo-sonar-scanner'
+            }
+            steps{
+                withOnarQubeEnv('daimyo-sonarqube-server'){
+                    sh "${scannerHome}/bin/sonar-scanner"
+                }
+            }
+        }
+        
     }
 }
