@@ -22,10 +22,10 @@ pipeline {
         }
         stage('sonarQube analysis'){
             environment{
-                scannerHome = tool 'daimyo-sonar-scanner'
+                scannerHome = tool 'daimyo-sonar-tool'
             }
             steps{
-                withOnarQubeEnv('daimyo-sonarqube-server'){
+                withOnarQubeEnv(credentialsId: 'sonarqube-key', installationName: 'daimyo-sonarqube-server'){
                     sh "${scannerHome}/bin/sonar-scanner"
                 }
             }
